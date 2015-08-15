@@ -56,7 +56,7 @@ ipc.on('addPath', function(ev) {
 	console.log('ADD PATH');
 	dialog.showOpenDialog(mainWindow, {properties: ['openDirectory']}, function(paths) {
 		var confPaths = conf.get('paths');
-		if (confPaths === null) {
+		if (!confPaths) {
 			confPaths = [];
 		}
 		confPaths.push(paths[0]);
