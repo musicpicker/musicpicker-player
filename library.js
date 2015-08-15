@@ -14,14 +14,21 @@ function Library(dbFile) {
 
 util.inherits(Library, events.EventEmitter);
 
-Library.prototype.update = function(path, regexp) {
+Library.prototype.update = function(paths, regexp) {
 	this.regexp = regexp;
-
-	this.walker = walkdir(path);
 	this.paths = [];
 
-	this.walker.on('file', this._onFile.bind(this));
-	this.walker.on('end', this._onWalkEnd.bind(this));
+	Promise.each(paths, function(path) {
+		return new Promise(function(resolve, reject) {
+			walker = walkdir(path);
+			walker.on('file', this._onFile.bind(this));
+			walker.on('end', function() {
+				resolve();
+			});
+		}.bind(this))
+	}.bind(this)).then(function() {
+		this._onWalkEnd.bind(this)();
+	}.bind(this));
 }
 
 Library.prototype._onFile = function(path) {
@@ -52,25 +59,36 @@ Library.prototype._insertNew = function () {
 	Promise.each(this.paths, function(path) {
 		return new Promise(function(resolve, reject) {
 			var stream = fs.createReadStream(path);
-
-			var parser = mm(stream, {duration: true}, function(err, meta) {
-				if (!err) {
-					i++;
-					this.db.insert({
-						Path: path,
-						Artist: meta.artist[0],
-						Album: meta.album,
-						Title: meta.title,
-						Year: meta.year,
-						'Number': meta.track.no,
-						Count: meta.track.of,
-						Duration: parseInt(meta.duration)
-					});
-				}
+			console.log(path);
+			new Promise(function(resolve, reject) {
+				var parser = mm(stream, {duration: true}, function(err, meta) {
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve(meta);
+					}
+				});
+			}).timeout(5000).then(function(meta) {
+				i++;
+				this.db.insert({
+					Path: path,
+					Artist: meta.artist[0],
+					Album: meta.album,
+					Title: meta.title,
+					Year: meta.year,
+					'Number': meta.track.no,
+					Count: meta.track.of,
+					Duration: parseInt(meta.duration)
+				});
 				console.log(i + ' / ' + this.paths.length);
 				stream.close();
 				resolve();
-			}.bind(this))
+			}.bind(this)).catch(function() {
+				console.log(i + ' / ' + this.paths.length);
+				stream.close();
+				resolve();
+			}.bind(this));
 		}.bind(this));
 	}.bind(this)).then(function() {
 		this.emit('done');

@@ -7,9 +7,8 @@ function Client(bearer, deviceId) {
 
 	this.socket = IO('http://127.0.0.1:3000');
 	this.socket.on('connect', function() {
-		console.log('SOCKET CONNECT');
 		this.socket.emit('authentication', bearer);
-		this.socket.on('authenticated', function() {
+		this.socket.on('user', function() {
 			this.socket.emit('RegisterDevice', deviceId);
 		}.bind(this));
 	}.bind(this));
