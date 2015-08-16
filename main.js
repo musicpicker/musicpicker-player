@@ -11,6 +11,8 @@ var fileUrl = require('file-url');
 var Library = require('./library');
 var Client = require('./client');
 
+if(require('electron-squirrel-startup')) return;
+
 var mainWindow = null;
 
 var library = new Library('musicpicker.db');

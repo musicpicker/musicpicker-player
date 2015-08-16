@@ -1,5 +1,6 @@
 {
   "name": "musicpicker-player",
+  "productName": "Musicpicker",
   "version": "1.0.0",
   "private": true,
   "homepage": "https://github.com/musicpicker/musicpicker-player",
@@ -12,6 +13,7 @@
   "dependencies": {
     "bluebird": "^2.9.34",
     "configstore": "^1.2.1",
+    "electron-squirrel-startup": "^0.1.2",
     "file-url": "^1.0.1",
     "fluxxor": "^1.7.1",
     "lodash": "^3.10.1",

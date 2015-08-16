@@ -1,0 +1,12 @@
+environment:
+  NODE_ENV: production
+  nodejs_version: 0.12
+install:
+- ps: Install-Product node $env:nodejs_version
+- npm install
+- npm install -g gulp grunt
+build_script:
+- gulp
+- gulp package
+- grunt create-windows-installer
+test: off

@@ -4,9 +4,8 @@ module.exports = function(grunt) {
 		  x64: {
 		    appDirectory: './builds/Musicpicker-win32-x64',
 		    outputDirectory: './builds/windows',
-		    authors: 'Musicpicker',
-		    description: 'Musicpicker native client and player',
-		    exe: 'Musicpicker.exe'
+		    exe: 'Musicpicker.exe',
+		    setupIcon: 'musicpicker.ico'
 		  }
 		}
 	});
