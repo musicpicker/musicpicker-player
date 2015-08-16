@@ -1,5 +1,4 @@
 environment:
-  NODE_ENV: production
   nodejs_version: 0.12
 install:
 - ps: Install-Product node $env:nodejs_version
