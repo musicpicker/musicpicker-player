@@ -8,4 +8,17 @@ build_script:
 - gulp
 - gulp package
 - grunt create-windows-installer
+- gulp windows-release
 test: off
+artifacts:
+-	path: builds\windows\MusicpickerSetup.exe
+  name: Setup
+deploy:
+- provider: S3
+	access_key_id: AKIAJH2DBYS7C32UWIJA
+	secret_access_key:
+		secure: DC7kd3kX/qWb2iQo8q1Wbae6/irThC7uS6J+2Bm1TejFRtNVSqBXtY3QYKsCFLw5
+	bucket: musicpicker-releases
+	set_public: true
+	folder: /
+	artifact: Setup
