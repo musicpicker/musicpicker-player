@@ -5,6 +5,7 @@ var mainBowerFiles = require('main-bower-files');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var reactify = require('reactify');
+var packager = require('electron-packager')
 
 gulp.task('default', ['build']);
 gulp.task('build', ['app', 'styles'], function() {
@@ -35,4 +36,18 @@ gulp.task('fonts', ['bower'], function() {
 
 gulp.task('bower', function() {
   return bower();
+});
+
+gulp.task('package', function(done) {
+  packager({
+    dir: './',
+    out: './builds',
+    name: 'Musicpicker',
+    platform: 'win32',
+    arch: 'x64',
+    version: '0.30.3',
+    asar: true
+  }, function(err, appPath) {
+    done();
+  });
 });
