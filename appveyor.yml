@@ -8,7 +8,6 @@ build_script:
 - gulp
 - gulp package
 - grunt create-windows-installer
-- gulp windows-release
 test: off
 artifacts:
 - path: builds\windows\MusicpickerSetup.exe
