@@ -1,11 +1,13 @@
 var IO = require('socket.io-client');
 var request = require('superagent');
 
+var pickerUrl = require('./package.json').pickerUrl;
+
 function Client(bearer, deviceId) {
 	this.bearer = bearer;
 	this.deviceId = deviceId;
 
-	this.socket = IO('http://127.0.0.1:3000');
+	this.socket = IO(pickerUrl);
 	this.socket.on('connect', function() {
 		this.socket.emit('authentication', bearer);
 		this.socket.on('user', function() {
@@ -15,7 +17,7 @@ function Client(bearer, deviceId) {
 }
 
 Client.prototype.submit = function(submissions) {
-	request.post('http://127.0.0.1:3000/api/devices/' + this.deviceId + '/submit')
+	request.post(pickerUrl + '/api/devices/' + this.deviceId + '/submit')
 		.set('Authorization', 'Bearer ' + this.bearer)
 		.set('Content-Type', 'application/json')
 		.send(submissions)

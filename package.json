@@ -5,6 +5,7 @@
   "private": true,
   "homepage": "https://github.com/musicpicker/musicpicker-player",
   "main": "main.js",
+  "pickerUrl": "https://app.musicpicker.net",
   "description": "Musicpicker native client and player",
   "license": "Apache-2.0",
   "author": {
@@ -35,6 +36,7 @@
     "gulp-bower": "0.0.10",
     "gulp-less": "^3.0.3",
     "main-bower-files": "^2.9.0",
+    "preprocessify": "0.0.3",
     "reactify": "^1.1.1",
     "vinyl-source-stream": "^1.1.0"
   }

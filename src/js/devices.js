@@ -2,6 +2,8 @@ var React = require('react');
 var FluxMixin = require('fluxxor').FluxMixin(React);
 var request = require('superagent');
 
+var baseUrl = require('./config').baseUrl;
+
 var Devices = React.createClass({
 	mixins: [FluxMixin],
 
@@ -12,7 +14,7 @@ var Devices = React.createClass({
 	},
 
 	componentDidMount: function() {
-    request.get('http://localhost:3000/api/Devices')
+    request.get(baseUrl + '/api/Devices')
     	.set('Authorization', 'Bearer ' + this.getFlux().store('AuthStore').bearer)
     	.end(function(err, res) {
 	      this.setState({devices: res.body});
@@ -27,7 +29,7 @@ var Devices = React.createClass({
 		ev.preventDefault();
 		var name = React.findDOMNode(this.refs.name).value;
 
-    request.post('http://localhost:3000/api/Devices')
+    request.post(baseUrl + '/api/Devices')
     	.set('Authorization', 'Bearer ' + this.getFlux().store('AuthStore').bearer)
     	.send({name: name})
     	.end(function(err, res) {

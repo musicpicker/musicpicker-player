@@ -5,6 +5,7 @@ var mainBowerFiles = require('main-bower-files');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var reactify = require('reactify');
+var preprocessify = require('preprocessify');
 var packager = require('electron-packager')
 
 gulp.task('default', ['build']);
@@ -14,10 +15,9 @@ gulp.task('build', ['app', 'styles'], function() {
 });
 
 gulp.task('app', function() {
-  return browserify({
-      entries: ['./src/js/main.js'],
-      transform: [reactify]
-    })
+  return browserify('./src/js/main.js')
+    .transform(preprocessify({'PICKER_URL': require('./package.json').pickerUrl}))
+    .transform(reactify)
     .bundle()
     .pipe(source('app.js'))
     .pipe(gulp.dest('ui/'));
