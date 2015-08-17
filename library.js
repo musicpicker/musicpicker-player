@@ -21,12 +21,15 @@ Library.prototype.update = function(paths, regexp) {
 	Promise.each(paths, function(path) {
 		return new Promise(function(resolve, reject) {
 			walker = walkdir(path);
+			this.emit('walk', path);
+
 			walker.on('file', this._onFile.bind(this));
 			walker.on('end', function() {
 				resolve();
 			});
 		}.bind(this))
 	}.bind(this)).then(function() {
+		this.emit('walk_end');
 		this._onWalkEnd.bind(this)();
 	}.bind(this));
 }
@@ -40,14 +43,18 @@ Library.prototype._onFile = function(path) {
 Library.prototype._onWalkEnd = function() {
 	this.db.find({}, {Path: 1, _id: 0}, function(err, docs) {
 		var dbPaths = docs.map(function(val) { return val.Path });
-		Promise.each(_.difference(dbPaths, _.intersection(dbPaths, this.paths)), function(path) {
+		var toRemove = _.difference(dbPaths, _.intersection(dbPaths, this.paths));
+		var i = 0;
+		Promise.each(toRemove, function(path) {
+			i++;
 			return new Promise(function(resolve, reject) {
-				console.log('Remove ' + path);
+				this.emit('removal', path, i, toRemove.length);
 				this.db.remove({Path: path}, {}, function() {
 					resolve();
 				});
 			}.bind(this));
 		}.bind(this)).then(function() {
+			this.emit('removal_end');
 			this.paths = _.difference(this.paths, dbPaths);
 			this._insertNew();
 		}.bind(this))
@@ -58,7 +65,6 @@ Library.prototype._insertNew = function () {
 	var i = 0;
 	Promise.each(this.paths, function(path) {
 		return new Promise(function(resolve, reject) {
-			console.log(path);
 			try {
 				var stream = fs.createReadStream(path);
 			}
@@ -86,20 +92,17 @@ Library.prototype._insertNew = function () {
 					Count: meta.track.of,
 					Duration: parseInt(meta.duration)
 				});
-				console.log(i + ' / ' + this.paths.length);
+				this.emit('insertion', path, i, this.paths.length);
 				stream.close();
 				resolve();
 			}.bind(this)).catch(function() {
-				console.log(i + ' / ' + this.paths.length);
 				stream.close();
 				resolve();
 			}.bind(this));
 		}.bind(this));
 	}.bind(this)).then(function() {
 		this.emit('done');
-	}.bind(this)).catch(function(err) {
-		this.emit('error', err);
-	}.bind(this))
+	}.bind(this));
 }
 
 Library.prototype.export = function() {
