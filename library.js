@@ -58,8 +58,13 @@ Library.prototype._insertNew = function () {
 	var i = 0;
 	Promise.each(this.paths, function(path) {
 		return new Promise(function(resolve, reject) {
-			var stream = fs.createReadStream(path);
 			console.log(path);
+			try {
+				var stream = fs.createReadStream(path);
+			}
+			catch (err) {
+				resolve();
+			}
 			new Promise(function(resolve, reject) {
 				var parser = mm(stream, {duration: true}, function(err, meta) {
 					if (err) {
