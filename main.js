@@ -20,6 +20,7 @@ if(require('electron-squirrel-startup')) return;
 
 var mainWindow = null;
 var appIcon = null;
+var willQuit = false;
 
 var library = new Library('musicpicker.db');
 var client = null;
@@ -35,7 +36,10 @@ function createTray() {
 		appIcon = new Tray(__dirname + '/musicpicker.png');
 	  var contextMenu = Menu.buildFromTemplate([
 	    { label: 'Configure paths', click: function() { mainWindow.show() } },
-	    { label: 'Exit', click: app.quit }
+	    { label: 'Exit', click: function() {
+		    	willQuit = true;
+		    	mainWindow.close();
+	    	}.bind(this) }
 	  ]);
 	  appIcon.setToolTip('Musicpicker');
 	  appIcon.setContextMenu(contextMenu);
@@ -48,7 +52,7 @@ function createTray() {
 app.on('ready', function() {
 	mainWindow = new BrowserWindow({width: 800, height: 600, show: false});
 	mainWindow.on('close', function(ev) {
-		if (client) {
+		if (client && !willQuit) {
 			ev.preventDefault();
 			mainWindow.hide();
 		}
