@@ -1,6 +1,7 @@
 var React = require('react');
 var FluxMixin = require('fluxxor').FluxMixin(React);
 var request = require('superagent');
+var ipc = window.require('ipc');
 
 var baseUrl = require('./config').baseUrl;
 
@@ -22,7 +23,7 @@ var Devices = React.createClass({
 	},
 
 	selectDevice: function(deviceId) {
-		this.getFlux().actions.selectDevice(deviceId);
+		ipc.send('device_select', deviceId);
 	},
 
 	newDevice: function(ev) {

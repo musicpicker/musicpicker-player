@@ -1,6 +1,7 @@
 var React = require('react');
 var FluxMixin = require('fluxxor').FluxMixin(React);
 var StoreWatchMixin = require('fluxxor').StoreWatchMixin;
+var ipc = window.require('ipc');
 
 var Device = React.createClass({
 	mixins: [FluxMixin, StoreWatchMixin('PathsStore')],
@@ -10,13 +11,12 @@ var Device = React.createClass({
 			paths: this.getFlux().store('PathsStore').paths
 		}
 	},
-
 	addPath: function() {
-		this.getFlux().actions.addPath();
+		ipc.send('path_add');
 	},
 
 	deletePath: function(index) {
-		this.getFlux().actions.deletePath(index);
+		ipc.send('path_delete', index);
 	},
 
 	render: function() {

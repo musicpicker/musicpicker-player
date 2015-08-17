@@ -1,38 +1,29 @@
 var React = require('react');
+var ReactRouter = require('react-router');
+var Route = require('react-router').Route;
+var RouteHandler = require('react-router').RouteHandler;
 var FluxMixin = require('fluxxor').FluxMixin(React);
-var StoreWatchMixin = require('fluxxor').StoreWatchMixin;
 
 var flux = require('./app').flux;
-var Login = require('./login').Login;
 var Devices = require('./devices').Devices;
 var Device = require('./device').Device;
 
 require('./player');
 
-var Main = React.createClass({
-	mixins: [FluxMixin, StoreWatchMixin('AuthStore')],
-
-	getStateFromFlux: function() {
-		var flux = this.getFlux();
-		return {
-			bearer: flux.store('AuthStore').bearer,
-			deviceId: flux.store('AuthStore').deviceId
-		}
-	},
-
+var BaseHandler = React.createClass({
+  mixins: [FluxMixin],
 	render: function() {
-		if (!this.state.bearer) {
-			return <Login />
-		}
-		else {
-			if (!this.state.deviceId) {
-				return <Devices />
-			}
-			else {
-				return <Device />
-			}
-		}
+		return <RouteHandler />
 	}
 });
 
-React.render(<Main flux={flux} />, document.getElementById('app'));
+var routes = (
+	<Route handler={BaseHandler}>
+		<Route name="devices" path="devices" handler={Devices} />
+		<Route name="device" path="device/:id" handler={Device} />
+	</Route>
+);
+
+ReactRouter.run(routes, function(Root) {
+	React.render(<Root flux={flux} />, document.getElementById('app'));
+});
