@@ -7,6 +7,9 @@ actions = {
 	},
 	setPaths: function(paths) {
 		this.dispatch('PATHS_SET', paths);
+	},
+	commitPaths: function() {
+		this.dispatch('PATHS_COMMIT');
 	}
 }
 
@@ -14,7 +17,8 @@ var PathsStore = Fluxxor.createStore({
 	paths: [],
 
 	actions: {
-		'PATHS_SET': 'setPaths'
+		'PATHS_SET': 'setPaths',
+		'PATHS_COMMIT': 'commitPaths'
 	},
 
 	setPaths: function(paths) {

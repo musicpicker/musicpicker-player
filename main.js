@@ -102,6 +102,7 @@ ipc.on('path_add', function(ev) {
 		confPaths.push(paths[0]);
 		conf.set('paths', confPaths);
 		ev.sender.send('paths', conf.get('paths'));
+		updateLibrary();
 	}.bind(this));
 });
 
@@ -110,6 +111,7 @@ ipc.on('path_delete', function(ev, index) {
 	paths.splice(index, 1);
 	conf.set('paths', paths);
 	ev.sender.send('paths', conf.get('paths'));
+	updateLibrary();
 });
 
 ipc.on('device_select', function(ev, deviceId) {
