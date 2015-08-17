@@ -15,6 +15,7 @@ function Library(dbFile) {
 util.inherits(Library, events.EventEmitter);
 
 Library.prototype.update = function(paths, regexp) {
+	if (!paths) return;
 	this.regexp = regexp;
 	this.paths = [];
 
