@@ -12,6 +12,7 @@ var Library = require('./library');
 var Client = require('./client');
 
 var pickerUrl = require('./package.json').pickerUrl;
+var clientId = require('./package.json').pickerClientId;
 
 if(require('electron-squirrel-startup')) return;
 
@@ -33,7 +34,7 @@ app.on('ready', function() {
 	});
 
 	function authenticate() {
-		mainWindow.loadUrl(pickerUrl + '/oauth/authorize?response_type=token&client_id=gqWGw0AddN_8IW6NHeyjU89goCb6m4m5xqZ1-Dgpca_oH8uV3JUgS6DD');
+		mainWindow.loadUrl(pickerUrl + '/oauth/authorize?response_type=token&client_id=' + clientId);
 		ipc.on('auth-token', function(ev, bearer) {
 			conf.set('bearer', bearer);
 			launch();

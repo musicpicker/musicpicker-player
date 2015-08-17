@@ -6,6 +6,7 @@
   "homepage": "https://github.com/musicpicker/musicpicker-player",
   "main": "main.js",
   "pickerUrl": "https://app.musicpicker.net",
+  "pickerClientId": "gqWGw0AddN_8IW6NHeyjU89goCb6m4m5xqZ1-Dgpca_oH8uV3JUgS6DD",
   "description": "Musicpicker native client and player",
   "license": "Apache-2.0",
   "author": {
