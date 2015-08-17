@@ -1,6 +1,8 @@
 var app = require('app');
 var Configstore = require('configstore');
 var BrowserWindow = require('browser-window');
+var Tray = require('tray');
+var Menu = require('menu');
 var ipc = require('ipc');
 var dialog = require('dialog');
 
@@ -17,6 +19,7 @@ var clientId = require('./package.json').pickerClientId;
 if(require('electron-squirrel-startup')) return;
 
 var mainWindow = null;
+var appIcon = null;
 
 var library = new Library('musicpicker.db');
 var client = null;
@@ -27,8 +30,29 @@ app.on('window-all-closed', function() {
 	}
 });
 
+function createTray() {
+	if (!appIcon) {
+		appIcon = new Tray(__dirname + '/musicpicker.png');
+	  var contextMenu = Menu.buildFromTemplate([
+	    { label: 'Configure paths', click: function() { mainWindow.show() } },
+	    { label: 'Exit', click: app.quit }
+	  ]);
+	  appIcon.setToolTip('Musicpicker');
+	  appIcon.setContextMenu(contextMenu);
+	  appIcon.on('clicked', function() {
+	  	mainWindow.show();
+	  });
+	}
+}
+
 app.on('ready', function() {
-	mainWindow = new BrowserWindow({width: 800, height: 600});
+	mainWindow = new BrowserWindow({width: 800, height: 600, show: false});
+	mainWindow.on('close', function(ev) {
+		if (client) {
+			ev.preventDefault();
+			mainWindow.hide();
+		}
+	});
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
@@ -43,9 +67,16 @@ app.on('ready', function() {
 
 	if (!conf.get('bearer')) {
 		authenticate();
+		mainWindow.show();
 	}
 	else {
 		launch();
+		if (conf.get('device')) {
+			createTray();
+		}
+		else {
+			mainWindow.show();
+		}
 	}
 })
 
@@ -81,6 +112,7 @@ ipc.on('device_select', function(ev, deviceId) {
 	conf.set('device', deviceId);
 	mainWindow.loadUrl('file://' + __dirname + '/ui/app.html#/device/' + deviceId);
 	launchClient();
+	createTray();
 });
 
 function updateLibrary() {
