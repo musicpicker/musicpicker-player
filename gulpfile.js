@@ -47,12 +47,22 @@ gulp.task('package', function(done) {
     arch: 'x64',
     version: '0.30.3',
     asar: true,
+    prune: true,
     icon: 'musicpicker.ico',
     'version-string': {
       ProductName: 'Musicpicker',
       CompanyName: 'Musicpicker',
       FileDescription: 'Musicpicker'
-    }
+    },
+    ignore: [
+      '/bower_components($|/)',
+      '/builds($|/)',
+      '/src($|/)',
+      '/node_modules/electron-prebuilt($|/)',
+      '/node_modules/electron-packager($|/)',
+      'musicpicker.db',
+      '/\.git($|/)'
+    ]
   }, function(err, appPath) {
     done();
   });
