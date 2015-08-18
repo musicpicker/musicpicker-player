@@ -5,8 +5,8 @@
   "private": true,
   "homepage": "https://github.com/musicpicker/musicpicker-player",
   "main": "main.js",
-  "pickerUrl": "http://localhost:3000",
-  "pickerClientId": "gqWGw0AddN_8IW6NHeyjU89goCb6m4m5xqZ1-Dgpca_oH8uV3JUgS6DD",
+  "pickerUrl": "https://app.musicpicker.net",
+  "pickerClientId": "QMJGc0Z7gc3TOzjQH7zG0HsoL2mkhrAPuGhx582Iu5Ta_iBZzIYW834l",
   "description": "Musicpicker native client and player",
   "license": "Apache-2.0",
   "author": {
