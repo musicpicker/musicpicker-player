@@ -71,11 +71,21 @@ var Device = React.createClass({
 		}
 	},
 	addPath: function() {
-		ipc.send('path_add');
+		ipc.send('path_dialog');
 	},
 
 	deletePath: function(index) {
-		ipc.send('path_delete', index);
+		this.getFlux().actions.deletePath(index);
+	},
+
+	componentDidMount: function() {
+		ipc.on('path_dialog', function(path) {
+			this.getFlux().actions.addPath(path);
+		}.bind(this));
+	},
+
+	commit: function() {
+		this.getFlux().actions.commitPaths();
 	},
 
 	render: function() {
@@ -98,6 +108,8 @@ var Device = React.createClass({
 		            <div className="text-center">
 		            	<p><small>Click on a path to delete it from list</small></p>
 		            	<button className="btn btn-success" onClick={this.addPath}>Add path</button>
+		            	<br />
+		            	<button className="btn btn-success" onClick={this.commit}>Update</button>
 		            </div>
 		          </div>
 		        </div>

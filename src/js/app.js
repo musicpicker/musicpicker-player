@@ -8,6 +8,18 @@ actions = {
 	setPaths: function(paths) {
 		this.dispatch('PATHS_SET', paths);
 	},
+	addPath: function(path) {
+		this.dispatch('PATHS_ADD', path);
+	},
+	deletePath: function(index) {
+		this.dispatch('PATHS_DELETE', index);
+	},
+	commitPaths: function() {
+		this.dispatch('PATHS_COMMIT');
+	},
+	resetPaths: function() {
+		this.dispatch('PATHS_RESET');
+	},
 	libraryUpdateBegin: function() {
 		this.dispatch('LIBRARY_UPDATE_BEGIN');
 	},
@@ -89,7 +101,23 @@ var PathsStore = Fluxxor.createStore({
 
 	actions: {
 		'PATHS_SET': 'setPaths',
+		'PATHS_ADD': 'addPath',
+		'PATHS_DELETE': 'deletePath',
 		'PATHS_COMMIT': 'commitPaths'
+	},
+
+	addPath: function(path) {
+		this.paths.push(path);
+		this.emit('change');
+	},
+
+	deletePath: function(index) {
+		this.paths.splice(index, 1);
+		this.emit('change');
+	},
+
+	commitPaths: function() {
+		ipc.send('paths_commit', this.paths);
 	},
 
 	setPaths: function(paths) {

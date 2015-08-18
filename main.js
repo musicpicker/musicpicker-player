@@ -92,26 +92,21 @@ ipc.on('ready', function(ev) {
 	ev.sender.send('paths', conf.get('paths'));
 });
 
-ipc.on('path_add', function(ev) {
+ipc.on('path_dialog', function(ev) {
 	dialog.showOpenDialog(mainWindow, {properties: ['openDirectory']}, function(paths) {
 		if (!paths) return;
-
-		var confPaths = conf.get('paths');
-		if (!confPaths) confPaths = [];
-		
-		confPaths.push(paths[0]);
-		conf.set('paths', confPaths);
-		ev.sender.send('paths', conf.get('paths'));
-		updateLibrary();
-	}.bind(this));
+		ev.sender.send('path_dialog', paths[0]);
+	});
 });
 
-ipc.on('path_delete', function(ev, index) {
-	var paths = conf.get('paths');
-	paths.splice(index, 1);
+ipc.on('paths_commit', function(ev, paths) {
 	conf.set('paths', paths);
 	ev.sender.send('paths', conf.get('paths'));
 	updateLibrary();
+});
+
+ipc.on('paths', function(ev) {
+	ev.sender.send('paths', conf.get('paths'));
 });
 
 ipc.on('device_select', function(ev, deviceId) {
