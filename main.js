@@ -116,7 +116,7 @@ ipc.on('path_delete', function(ev, index) {
 
 ipc.on('device_select', function(ev, deviceId) {
 	conf.set('device', deviceId);
-	mainWindow.loadUrl('file://' + __dirname + '/ui/app.html#/device/' + deviceId);
+	mainWindow.webContents.send('transitionTo', 'device', {id: deviceId});
 	launchClient();
 	createTray();
 });
@@ -127,8 +127,24 @@ function updateLibrary() {
 	library.on('done', function() {
 		library.export().then(function(result) {
 			client.submit(result);
+			mainWindow.webContents.send('update_end');
 		})
 	})
+	library.on('walk_file', function() {
+		mainWindow.webContents.send('update_begin');
+	});
+	library.on('walk_end', function() {
+		mainWindow.webContents.send('walk_end');
+	});
+	library.on('stats', function(stats) {
+		mainWindow.webContents.send('update_stats', stats);
+	});
+	library.on('insertion', function(path, progress) {
+		mainWindow.webContents.send('update_insert', progress);
+	});
+	library.on('removal', function(path, progress) {
+		mainWindow.webContents.send('update_removal', progress);
+	});
 }
 
 function launch() {

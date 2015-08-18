@@ -18,11 +18,11 @@ Library.prototype.update = function(paths, regexp) {
 	if (!paths) return;
 	this.regexp = regexp;
 	this.paths = [];
+	this.emit('walk_begin');
 
 	Promise.each(paths, function(path) {
 		return new Promise(function(resolve, reject) {
 			walker = walkdir(path);
-			this.emit('walk', path);
 
 			walker.on('file', this._onFile.bind(this));
 			walker.on('end', function() {
@@ -37,6 +37,7 @@ Library.prototype.update = function(paths, regexp) {
 
 Library.prototype._onFile = function(path) {
 	if (this.regexp.test(path)) {
+		this.emit('walk_file', path);
 		this.paths.push(path);
 	}
 }
@@ -45,6 +46,12 @@ Library.prototype._onWalkEnd = function() {
 	this.db.find({}, {Path: 1, _id: 0}, function(err, docs) {
 		var dbPaths = docs.map(function(val) { return val.Path });
 		var toRemove = _.difference(dbPaths, _.intersection(dbPaths, this.paths));
+		this.paths = _.difference(this.paths, dbPaths);
+		this.emit('stats', {
+			removals: toRemove.length,
+			insertions: this.paths.length
+		});
+
 		var i = 0;
 		Promise.each(toRemove, function(path) {
 			i++;
@@ -55,8 +62,6 @@ Library.prototype._onWalkEnd = function() {
 				});
 			}.bind(this));
 		}.bind(this)).then(function() {
-			this.emit('removal_end');
-			this.paths = _.difference(this.paths, dbPaths);
 			this._insertNew();
 		}.bind(this))
 	}.bind(this));
