@@ -5,6 +5,7 @@ var Tray = require('tray');
 var Menu = require('menu');
 var ipc = require('ipc');
 var dialog = require('dialog');
+var path = require('path');
 
 var conf = new Configstore('musicpicker-player');
 var qs = require('query-string');
@@ -33,7 +34,7 @@ app.on('window-all-closed', function() {
 
 function createTray() {
 	if (!appIcon) {
-		appIcon = new Tray(__dirname + '/musicpicker.png');
+		appIcon = new Tray(path.join(__dirname, '/musicpicker.png'));
 	  var contextMenu = Menu.buildFromTemplate([
 	    { label: 'Configure paths', click: function() { mainWindow.show() } },
 	    { label: 'Exit', click: function() {
