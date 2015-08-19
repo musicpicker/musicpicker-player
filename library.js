@@ -6,6 +6,7 @@ var _ = require('lodash');
 var walkdir = require('walkdir');
 var Datastore = require('nedb');
 var mm = require('musicmetadata');
+var domain = require('domain');
 
 function Library(dbFile) {
 	this.db = new Datastore({filename: dbFile, autoload: true});
@@ -71,21 +72,22 @@ Library.prototype._insertNew = function () {
 	var i = 0;
 	Promise.each(this.paths, function(path) {
 		return new Promise(function(resolve, reject) {
-			try {
-				var stream = fs.createReadStream(path);
-			}
-			catch (err) {
-				resolve();
-			}
+			var stream = fs.createReadStream(path);
 			new Promise(function(resolve, reject) {
-				var parser = mm(stream, {duration: true}, function(err, meta) {
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve(meta);
-					}
-				});
+				var d = domain.create();
+				d.on('error', function(err) {
+					reject(err);
+				}.bind(this));
+				d.run(function() {
+					mm(stream, {duration: true}, function(err, meta) {
+						if (err) {
+							reject(err);
+						}
+						else {
+							resolve(meta);
+						}
+					});
+				}.bind(this));
 			}).timeout(5000).then(function(meta) {
 				i++;
 				this.db.insert({
