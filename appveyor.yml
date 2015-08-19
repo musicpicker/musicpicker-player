@@ -1,3 +1,4 @@
+version: {build}
 environment:
   nodejs_version: 0.12
 install:
@@ -10,7 +11,7 @@ build_script:
 - grunt create-windows-installer
 test: off
 artifacts:
-- path: builds\windows\MusicpickerSetup.exe
+- path: builds\windows\*.exe
   name: Setup
 deploy:
 - provider: S3
@@ -19,5 +20,7 @@ deploy:
     secure: DC7kd3kX/qWb2iQo8q1Wbae6/irThC7uS6J+2Bm1TejFRtNVSqBXtY3QYKsCFLw5
   bucket: musicpicker-releases
   set_public: true
-  folder: /
+  folder: /latest/win64
   artifact: Setup
+  on:
+    branch: master
