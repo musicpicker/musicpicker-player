@@ -117,6 +117,17 @@ ipc.on('device_select', function(ev, deviceId) {
 	createTray();
 });
 
+function throttle(callback, max) {
+  var buf = 0;
+  return function(path, progress) {
+    buf++;
+    if (buf === max) {
+      callback(path, progress);
+      buf = 0;
+    }
+  }
+}
+
 library.on('done', function() {
 	library.export().then(function(result) {
 		client.submit(result);
@@ -132,12 +143,18 @@ library.on('walk_end', function() {
 library.on('stats', function(stats) {
 	mainWindow.webContents.send('update_stats', stats);
 });
-library.on('insertion', function(path, progress) {
+
+var throttledInsert = throttle(function(path, progress) {
 	mainWindow.webContents.send('update_insert', progress);
-});
-library.on('removal', function(path, progress) {
+}.bind(this), 5);
+
+var throttledRemove = throttle(function(path, progress) {
 	mainWindow.webContents.send('update_removal', progress);
-});
+}.bind(this), 20);
+
+library.on('insertion', throttledInsert);
+
+library.on('removal', throttledRemove);
 
 function updateLibrary() {
 	var regexp = /\.(?:wav|mp3|aac|m4a)$/i
