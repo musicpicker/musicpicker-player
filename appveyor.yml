@@ -1,4 +1,4 @@
-version: {build}
+version: '{build}'
 environment:
   nodejs_version: 0.12
 install:
