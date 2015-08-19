@@ -66,13 +66,16 @@ var LibraryStateStore = Fluxxor.createStore({
 	},
 
 	libraryWalkEnd: function() {
-		console.log('WALK END');
 		this.walking = false;
 		this.emit('change');
 	},
 
 	libraryUpdateEnd: function() {
 		this.updating = false;
+		this.insertions = 0;
+		this.removals = 0;
+		this.insertion_progress = 0;
+		this.removal_progress = 0;
 		this.emit('change');
 	},
 
