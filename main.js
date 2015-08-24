@@ -9,7 +9,6 @@ var path = require('path');
 
 var conf = new Configstore('musicpicker-player');
 var qs = require('query-string');
-var fileUrl = require('file-url');
 
 var Library = require('./library');
 var Client = require('./client');
@@ -51,7 +50,7 @@ function createTray() {
 }
 
 app.on('ready', function() {
-	mainWindow = new BrowserWindow({width: 800, height: 600, show: false});
+	mainWindow = new BrowserWindow({width: 800, height: 600});
 	mainWindow.on('close', function(ev) {
 		if (client && !willQuit) {
 			ev.preventDefault();
@@ -60,6 +59,18 @@ app.on('ready', function() {
 	});
 	mainWindow.on('closed', function() {
 		mainWindow = null;
+	});
+
+	var protocol = require('protocol');
+	var fs = require('fs');
+	var mime = require('mime');
+	protocol.registerBufferProtocol('library', function(request, callback) {
+		var trackId = request.url.substr(10);
+		library.getTrackPath(trackId).then(function(path) {
+			fs.readFile(path, function(err, data) {
+				callback({mimeType: mime.lookup(path), data: data});
+			});
+		});
 	});
 
 	function authenticate() {
@@ -189,10 +200,7 @@ function launchClient() {
 	})
 
 	client.socket.on('SetTrackId', function(trackId) {
-		library.getTrackPath(trackId).then(function(result) {
-			var src = fileUrl(result);
-			mainWindow.webContents.send('audio-src', src);
-		})
+		mainWindow.webContents.send('audio-src', 'library://' + trackId);
 	});
 
 	client.socket.on('RequestNext', function() {

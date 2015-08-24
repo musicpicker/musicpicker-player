@@ -15,10 +15,11 @@
   "dependencies": {
     "bluebird": "^2.9.34",
     "configstore": "^1.2.1",
+    "electron-prebuilt": "0.31.0",
     "electron-squirrel-startup": "^0.1.2",
-    "file-url": "^1.0.1",
     "fluxxor": "^1.7.1",
     "lodash": "^3.10.1",
+    "mime": "^1.3.4",
     "musicmetadata": "^2.0.0",
     "nedb": "^1.1.3",
     "play-audio": "^0.1.0",

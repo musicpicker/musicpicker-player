@@ -45,7 +45,7 @@ gulp.task('package', function(done) {
     name: 'Musicpicker',
     platform: 'win32',
     arch: 'x64',
-    version: '0.30.1',
+    version: '0.31.0',
     asar: true,
     prune: true,
     icon: 'musicpicker.ico',
