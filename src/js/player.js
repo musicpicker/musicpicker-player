@@ -1,6 +1,10 @@
 var play = require('play-audio')();
 var ipc = window.require('ipc');
 
+play.on('canplay', function() {
+	play.play();
+})
+
 ipc.on('audio-src', function(src) {
 	play.src(src);
 });
